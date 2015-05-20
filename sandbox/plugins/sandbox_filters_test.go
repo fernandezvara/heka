@@ -2,6 +2,10 @@ package plugins
 
 import (
 	"fmt"
+	"os"
+	"path/filepath"
+	"time"
+
 	"github.com/mozilla-services/heka/message"
 	"github.com/mozilla-services/heka/pipeline"
 	ts "github.com/mozilla-services/heka/pipeline/testsupport"
@@ -9,9 +13,6 @@ import (
 	"github.com/mozilla-services/heka/sandbox"
 	"github.com/rafrombrc/gomock/gomock"
 	gs "github.com/rafrombrc/gospec/src/gospec"
-	"os"
-	"path/filepath"
-	"time"
 )
 
 type FilterTestHelper struct {
@@ -67,7 +68,7 @@ func FilterSpec(c gs.Context) {
 			inChan <- pack
 			close(inChan)
 			err = sbFilter.Run(fth.MockFilterRunner, fth.MockHelper)
-			termErr := pipeline.TerminatedError("exceeded InjectMessage count")
+			termErr := pipeline.TerminatedError("process_message() ../lua/testsupport/processinject.lua:8: inject_payload() exceeded InjectMessage count")
 			c.Expect(err.Error(), gs.Equals, termErr.Error())
 		})
 
@@ -89,7 +90,7 @@ func FilterSpec(c gs.Context) {
 				close(inChan)
 			}()
 			err = sbFilter.Run(fth.MockFilterRunner, fth.MockHelper)
-			termErr := pipeline.TerminatedError("exceeded InjectMessage count")
+			termErr := pipeline.TerminatedError("timer_event() ../lua/testsupport/timerinject.lua:13: inject_payload() exceeded InjectMessage count")
 			c.Expect(err.Error(), gs.Equals, termErr.Error())
 		})
 
